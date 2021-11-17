@@ -1,5 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonPage, IonGrid, IonRow, IonCol, IonItem, IonButton, IonLabel, IonInput } from '@ionic/react';
+
+import Cards from './Cards'
 
 const Home = () => {
   const ingOne = useRef(null);
@@ -22,16 +24,28 @@ const Home = () => {
   //   }
   // }
 
+  useEffect(() => {
+    console.log(currentRecipes)
+    ingOne.current.value = ""
+    ingTwo.current.value = ""
+    ingThree.current.value = ""
+    ingFour.current.value = ""
+    ingFive.current.value = ""
+  })
+
   const createRecipeList = object => {
     const ids = object.map(recipe => recipe.id)
     const recipeList = []
 
-    for (const id in ids) {
+    for (const id of ids) {
+      console.log(id);
       fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=7ab46aa5f86d43f2addd9e5da1e6a23d&includeNutrition=false`)
-      .then(resp => resp.json)
+      .then(resp => resp.json())
       .then(jsob => recipeList.push({name: jsob.title, link: jsob.sourceUrl}))
     }
+
     setCurrentRecipes(recipeList)
+
   }
 
   const handleSubmit = () => {
@@ -101,6 +115,7 @@ const Home = () => {
               <IonButton onClick={handleSubmit}>Find Recipies</IonButton>
             </IonCol>
           </IonRow>
+          {currentRecipes.length > 0 ? <Cards currentRecipes={currentRecipes} /> : null }
         </IonGrid>
       </IonContent>
     </IonPage>
